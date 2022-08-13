@@ -31,7 +31,13 @@ module.exports = function check(str, ...bracketsConfig) {
     // текущий элемент 
     let curr_el = str[i];
 
-    // текущий элемент - открывающая скобка
+
+    // if (open_bracket.includes(curr_el) && (close_bracket.includes(curr_el)) &&
+    //   ((spec_stack.length % 2 !== 0)) || (spec_stack.length == 0)) {
+    //   spec_stack.push(curr_el);
+    // }
+
+    // текущий элемент - открывающая скобка  && ((spec_stack.length % 2 !== 0)) || (spec_stack.length == 0)) 
     if (open_bracket.includes(curr_el)) {
       // а также если текущий элемент - закрывающая  скобка т.е. ||
       // if (close_bracket.includes(curr_el) && (stack.length === 0)) {
@@ -39,12 +45,22 @@ module.exports = function check(str, ...bracketsConfig) {
       // }
 
 
-
-      stack.push(curr_el);
-
-      if ((close_bracket.includes(curr_el)) && (spec_stack.length % 2 == 0)) {
-        spec_stack.push(curr_el);
+      // если стек еще не содержит скобки которая явл и закр и откр одновременно как скобки "или"|| 
+      // если уже содержит такую скобку - значит текущая скобка явл закрывающей надо перейти к шагу с закр скобками
+      if (!stack.includes(curr_el) && open_bracket.includes(curr_el) && close_bracket.includes(curr_el)) {
+        stack.push(curr_el);
+        continue;
+      } else {
+        // если тек эл не закр скобка то
+        if (!close_bracket.includes(curr_el)) {
+          // заносим в стек скобку не явл одинаковой 
+          stack.push(curr_el);
+          continue;
+        }
       }
+
+
+
       //   if ((close_bracket.includes(str[i + 1]) && (!open_bracket.includes(str[i + 1])) && (i !== (str.length - 1)))) {
       //     console.log('\n стрsdsdsdока: ' + str);
       //     console.log(false);
@@ -56,7 +72,11 @@ module.exports = function check(str, ...bracketsConfig) {
       // }
 
 
-    } else {
+    }
+
+    // если тек эл закрывающая скобка:
+    // else {
+    if (close_bracket.includes(curr_el)) {
       // если текущий эл не открыв скобка и стэк пуст значит ошибка
       if (stack.length === 0) {
         console.log('\n строка: ' + str);
@@ -64,15 +84,8 @@ module.exports = function check(str, ...bracketsConfig) {
         return false;
       }
 
-
       // последний элемент в стэке
       let top_el_stack = stack[stack.length - 1];
-      // предыдущий элемент в стэке
-      // let prev_el_stack = stack[stack.length - 2];
-      // следующий элемент в строке!
-      // let next_el_str = str[i + 1]; stack[stack.length - 1];
-
-
 
 
       // если элемент не открыв скобка и стэк не пуст значит найти парную скобку
@@ -87,30 +100,29 @@ module.exports = function check(str, ...bracketsConfig) {
         //   console.log(false);
         //   return false;
         // }
+        // if ((close_bracket.includes(curr_el)) && (spec_stack.length % 2 == 0)) {
+        //   if (i < str.length - 1) {
+        //     if (close_bracket.includes(str[i + 1]) && !open_bracket.includes(str[i + 1])) {
+        //       console.log('\n i < str.length-1 строка: ' + str);
+        //       console.log(false);
+        //       return false;
+        //     }
+        //   }
+
+        //   spec_stack.pop();
+        // }
+
 
         stack.pop();
 
       } else {
 
         console.log('\n строка: ' + str);
+        console.log('текущая скобка: ' + curr_el + 'индекс: ' + i);
+        console.log('верхний элемент стека: ' + top_el_stack);
         console.log(false);
         return false;
       }
-
-      // if (close_bracket.includes(curr_el) && open_bracket.includes(curr_el)) {
-      //   spec_stack.pop();
-      // }
-      // последний элемент в спец стэке
-      let top_spec_stack = spec_stack[spec_stack.length - 1];
-      // если скобки одинаковы ||
-      // if (close_bracket.includes(curr_el) && (open_bracket.includes(curr_el)) && (top_spec_stack === bracket_pair[curr_el])) {
-      //   spec_stack.pop();
-      // }
-
-
-
-
-
     }
   }
 
@@ -126,8 +138,8 @@ module.exports = function check(str, ...bracketsConfig) {
   console.log('=---------------=');
   console.log('spec_stack.length: ' + spec_stack.length);
 
-  console.log(((stack.length === 0) && (spec_stack.length === 0)));
-  return ((stack.length === 0) && (spec_stack.length === 0));
+  console.log(((stack.length === 0)));
+  return ((stack.length === 0));
 }
 
 
